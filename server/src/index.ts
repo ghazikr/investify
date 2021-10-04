@@ -5,13 +5,29 @@ import express from "express";
 import "reflect-metadata";
 import { buildSchema } from "type-graphql";
 import { TestResolver } from "./resolvers/test";
+import { createConnection } from "typeorm";
+import path from "path";
+import { User } from "./entities/User";
+import { UserResolver } from "./resolvers/user";
 
 const main = async () => {
   const app = express();
 
+  const connection = await createConnection({
+    type: "postgres",
+    database: "investify",
+    username: "postgres",
+    password: "postgres",
+    logging: true,
+    synchronize: true,
+    migrations: [path.join(__dirname, "./migrations/*")],
+    entities: [User],
+  });
+  await connection.runMigrations();
+
   const apolloServer = new ApolloServer({
     schema: await buildSchema({
-      resolvers: [TestResolver],
+      resolvers: [TestResolver, UserResolver],
       validate: false,
     }),
     plugins: [ApolloServerPluginLandingPageGraphQLPlayground],
