@@ -9,6 +9,14 @@ import { createConnection } from "typeorm";
 import path from "path";
 import { User } from "./entities/User";
 import { UserResolver } from "./resolvers/user";
+import Redis from "ioredis";
+import session from "express-session";
+import connectRedis from "connect-redis";
+import cors from "cors";
+import { MyContext } from "./types";
+
+const RedisStore = connectRedis(session);
+const redis = new Redis();
 
 const main = async () => {
   const app = express();
@@ -25,11 +33,38 @@ const main = async () => {
   });
   await connection.runMigrations();
 
+  app.use(
+    cors({
+      credentials: true,
+      origin: "http://localhost:3000",
+    })
+  );
+
+  app.use(
+    session({
+      name: "qid",
+      store: new RedisStore({
+        client: redis,
+        disableTouch: true,
+      }),
+      cookie: {
+        maxAge: 1000 * 60 * 60 * 24 * 365,
+        httpOnly: true,
+        sameSite: "lax", //csrf
+        secure: false, // cookie only works in https
+      },
+      saveUninitialized: false,
+      secret: "dfhjezof58ezhe",
+      resave: false,
+    })
+  );
+
   const apolloServer = new ApolloServer({
     schema: await buildSchema({
       resolvers: [TestResolver, UserResolver],
       validate: false,
     }),
+    context: ({ req }: MyContext) => ({ req }),
     plugins: [ApolloServerPluginLandingPageGraphQLPlayground],
   });
   await apolloServer.start();
