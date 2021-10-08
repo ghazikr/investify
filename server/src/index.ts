@@ -64,7 +64,7 @@ const main = async () => {
       resolvers: [TestResolver, UserResolver],
       validate: false,
     }),
-    context: ({ req }: MyContext) => ({ req }),
+    context: ({ req, res }: MyContext) => ({ req, redis, res }),
     plugins: [ApolloServerPluginLandingPageGraphQLPlayground],
   });
   await apolloServer.start();

@@ -1,4 +1,5 @@
-import { Request } from "express";
+import { Request, Response } from "express";
+import Redis from "ioredis";
 
 export interface MyContext {
   req: Request & {
@@ -6,4 +7,6 @@ export interface MyContext {
       userId?: any;
     };
   };
+  res: Response;
+  redis: Redis.Redis;
 }
