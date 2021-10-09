@@ -5,31 +5,36 @@ import {
   Column,
   BaseEntity,
   PrimaryGeneratedColumn,
-  OneToMany,
+  ManyToOne,
 } from "typeorm";
-import { Field, ObjectType } from "type-graphql";
-import { Idea } from "./Idea";
+import { Field, Float, ObjectType } from "type-graphql";
+import { User } from "./User";
 
 @ObjectType()
 @Entity()
-export class User extends BaseEntity {
+export class Idea extends BaseEntity {
   @Field()
   @PrimaryGeneratedColumn()
   id!: number;
 
   @Field()
-  @Column({ unique: true })
-  username!: string;
+  @Column()
+  title!: string;
 
   @Field()
-  @Column({ unique: true })
-  email!: string;
-
   @Column()
-  password!: string;
+  description!: string;
 
-  @OneToMany(() => Idea, (idea) => idea.user)
-  ideas: Idea[];
+  @Field(() => Float)
+  @Column()
+  cost!: number;
+
+  @Field()
+  @Column()
+  userId!: number;
+
+  @ManyToOne(() => User, (user) => user.ideas)
+  user: User;
 
   @Field(() => String)
   @UpdateDateColumn()

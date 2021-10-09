@@ -14,6 +14,8 @@ import session from "express-session";
 import connectRedis from "connect-redis";
 import cors from "cors";
 import { MyContext } from "./types";
+import { Idea } from "./entities/Idea";
+import { IdeaResolver } from "./resolvers/idea";
 
 const RedisStore = connectRedis(session);
 const redis = new Redis();
@@ -29,7 +31,7 @@ const main = async () => {
     logging: true,
     synchronize: true,
     migrations: [path.join(__dirname, "./migrations/*")],
-    entities: [User],
+    entities: [User, Idea],
   });
   await connection.runMigrations();
 
@@ -61,7 +63,7 @@ const main = async () => {
 
   const apolloServer = new ApolloServer({
     schema: await buildSchema({
-      resolvers: [TestResolver, UserResolver],
+      resolvers: [TestResolver, UserResolver, IdeaResolver],
       validate: false,
     }),
     context: ({ req, res }: MyContext) => ({ req, redis, res }),
