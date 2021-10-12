@@ -1,5 +1,5 @@
 import { MyContext } from "src/types";
-import { Arg, Ctx, Mutation, Resolver } from "type-graphql";
+import { Arg, Ctx, Mutation, Query, Resolver } from "type-graphql";
 import { Idea } from "../entities/Idea";
 
 @Resolver()
@@ -17,5 +17,10 @@ export class IdeaResolver {
       cost,
       userId: req.session.userId,
     }).save();
+  }
+
+  @Query(() => [Idea])
+  async ideas() {
+    return await Idea.find({});
   }
 }

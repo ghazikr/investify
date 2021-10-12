@@ -1,0 +1,8 @@
+query Ideas {
+  ideas {
+    id
+    title
+    description
+    cost
+  }
+}

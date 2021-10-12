@@ -1,7 +1,12 @@
 import { useRouter } from "next/dist/client/router";
 import React, { useState } from "react";
 import { Layout } from "../components/Layout";
-import { useLoginMutation, useTestQuery } from "../generated/graphql";
+import {
+  CurrentUserDocument,
+  CurrentUserQuery,
+  useLoginMutation,
+  useTestQuery,
+} from "../generated/graphql";
 
 interface loginProps {}
 
@@ -19,7 +24,17 @@ const Login: React.FC<loginProps> = ({}) => {
   console.log({ data });
 
   const handleSubmit = async () => {
-    const response = await login();
+    const response = await login({
+      update: (cache, { data }) => {
+        cache.writeQuery<CurrentUserQuery>({
+          query: CurrentUserDocument,
+          data: {
+            __typename: "Query",
+            currentUser: data.login,
+          },
+        });
+      },
+    });
     if (response.data.login) {
       router.push("/");
     }

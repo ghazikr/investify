@@ -67,6 +67,7 @@ export type MutationRegisterArgs = {
 export type Query = {
   __typename?: 'Query';
   currentUser?: Maybe<User>;
+  ideas: Array<Idea>;
   test: Scalars['String'];
 };
 
@@ -91,7 +92,7 @@ export type LoginMutationVariables = Exact<{
 }>;
 
 
-export type LoginMutation = { __typename?: 'Mutation', login?: { __typename?: 'User', email: string, username: string } | null | undefined };
+export type LoginMutation = { __typename?: 'Mutation', login?: { __typename?: 'User', id: number, email: string, username: string } | null | undefined };
 
 export type LogoutMutationVariables = Exact<{ [key: string]: never; }>;
 
@@ -103,6 +104,11 @@ export type CurrentUserQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type CurrentUserQuery = { __typename?: 'Query', currentUser?: { __typename?: 'User', id: number, username: string, email: string } | null | undefined };
 
+export type IdeasQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type IdeasQuery = { __typename?: 'Query', ideas: Array<{ __typename?: 'Idea', id: number, title: string, description: string, cost: number }> };
+
 export type TestQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -112,6 +118,7 @@ export type TestQuery = { __typename?: 'Query', test: string };
 export const LoginDocument = gql`
     mutation Login($email: String!, $password: String!) {
   login(email: $email, password: $password) {
+    id
     email
     username
   }
@@ -210,6 +217,43 @@ export function useCurrentUserLazyQuery(baseOptions?: Apollo.LazyQueryHookOption
 export type CurrentUserQueryHookResult = ReturnType<typeof useCurrentUserQuery>;
 export type CurrentUserLazyQueryHookResult = ReturnType<typeof useCurrentUserLazyQuery>;
 export type CurrentUserQueryResult = Apollo.QueryResult<CurrentUserQuery, CurrentUserQueryVariables>;
+export const IdeasDocument = gql`
+    query Ideas {
+  ideas {
+    id
+    title
+    description
+    cost
+  }
+}
+    `;
+
+/**
+ * __useIdeasQuery__
+ *
+ * To run a query within a React component, call `useIdeasQuery` and pass it any options that fit your needs.
+ * When your component renders, `useIdeasQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useIdeasQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useIdeasQuery(baseOptions?: Apollo.QueryHookOptions<IdeasQuery, IdeasQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<IdeasQuery, IdeasQueryVariables>(IdeasDocument, options);
+      }
+export function useIdeasLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<IdeasQuery, IdeasQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<IdeasQuery, IdeasQueryVariables>(IdeasDocument, options);
+        }
+export type IdeasQueryHookResult = ReturnType<typeof useIdeasQuery>;
+export type IdeasLazyQueryHookResult = ReturnType<typeof useIdeasLazyQuery>;
+export type IdeasQueryResult = Apollo.QueryResult<IdeasQuery, IdeasQueryVariables>;
 export const TestDocument = gql`
     query Test {
   test
