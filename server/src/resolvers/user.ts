@@ -1,5 +1,5 @@
 import { MyContext } from "src/types";
-import { Arg, Ctx, Mutation, Resolver } from "type-graphql";
+import { Arg, Ctx, Mutation, Query, Resolver } from "type-graphql";
 import argon2 from "argon2";
 import { v4 } from "uuid";
 import { User } from "../entities/User";
@@ -36,6 +36,14 @@ export class UserResolver {
       }
     }
     req.session.userId = user.id;
+    return user;
+  }
+
+  @Query(() => User, { nullable: true })
+  async currentUser(@Ctx() { req }: MyContext) {
+    const userId = req.session.userId;
+    if (!userId) return null;
+    const user = User.findOne(userId);
     return user;
   }
 
@@ -121,14 +129,14 @@ export class UserResolver {
   }
 
   @Mutation(() => Boolean)
-  logout(@Ctx() { req, res }: MyContext) {
+  logout(@Ctx() { req, res }: MyContext): Promise<boolean> {
     return new Promise((resolve) =>
       req.session.destroy((err) => {
         res.clearCookie("qid");
         if (err) {
           console.log(err);
           resolve(false);
-          // return;
+          return;
         }
         resolve(true);
       })
