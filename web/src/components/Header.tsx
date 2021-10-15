@@ -1,12 +1,14 @@
 import React from "react";
 import NextLink from "next/link";
 import { useCurrentUserQuery, useLogoutMutation } from "../generated/graphql";
+import { useApolloClient } from "@apollo/client";
 
 interface HeaderProps {}
 
 export const Header: React.FC<HeaderProps> = ({}) => {
   const { data } = useCurrentUserQuery();
   const [logout] = useLogoutMutation();
+  const client = useApolloClient();
   return (
     <header className="text-gray-600 body-font">
       <div className="container mx-auto flex flex-wrap p-5 flex-col md:flex-row items-center">
@@ -29,9 +31,7 @@ export const Header: React.FC<HeaderProps> = ({}) => {
           {data && data.currentUser ? (
             <button
               className="mr-5 hover:text-gray-100 text-white p-2 bg-red-500"
-              onClick={() => {
-                logout();
-              }}
+              onClick={() => logout().then(() => client.resetStore())}
             >
               Logout
             </button>

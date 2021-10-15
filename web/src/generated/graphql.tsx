@@ -86,13 +86,15 @@ export type UserInput = {
   username: Scalars['String'];
 };
 
+export type UserResponseFragment = { __typename?: 'User', email: string, username: string };
+
 export type LoginMutationVariables = Exact<{
   email: Scalars['String'];
   password: Scalars['String'];
 }>;
 
 
-export type LoginMutation = { __typename?: 'Mutation', login?: { __typename?: 'User', id: number, email: string, username: string } | null | undefined };
+export type LoginMutation = { __typename?: 'Mutation', login?: { __typename?: 'User', email: string, username: string } | null | undefined };
 
 export type LogoutMutationVariables = Exact<{ [key: string]: never; }>;
 
@@ -102,7 +104,7 @@ export type LogoutMutation = { __typename?: 'Mutation', logout: boolean };
 export type CurrentUserQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type CurrentUserQuery = { __typename?: 'Query', currentUser?: { __typename?: 'User', id: number, username: string, email: string } | null | undefined };
+export type CurrentUserQuery = { __typename?: 'Query', currentUser?: { __typename?: 'User', email: string, username: string } | null | undefined };
 
 export type IdeasQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -114,16 +116,19 @@ export type TestQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type TestQuery = { __typename?: 'Query', test: string };
 
-
+export const UserResponseFragmentDoc = gql`
+    fragment UserResponse on User {
+  email
+  username
+}
+    `;
 export const LoginDocument = gql`
     mutation Login($email: String!, $password: String!) {
   login(email: $email, password: $password) {
-    id
-    email
-    username
+    ...UserResponse
   }
 }
-    `;
+    ${UserResponseFragmentDoc}`;
 export type LoginMutationFn = Apollo.MutationFunction<LoginMutation, LoginMutationVariables>;
 
 /**
@@ -184,12 +189,10 @@ export type LogoutMutationOptions = Apollo.BaseMutationOptions<LogoutMutation, L
 export const CurrentUserDocument = gql`
     query CurrentUser {
   currentUser {
-    id
-    username
-    email
+    ...UserResponse
   }
 }
-    `;
+    ${UserResponseFragmentDoc}`;
 
 /**
  * __useCurrentUserQuery__

@@ -1,5 +1,6 @@
 import { useRouter } from "next/dist/client/router";
 import React, { useState } from "react";
+import NextLink from "next/link";
 import { Layout } from "../components/Layout";
 import {
   CurrentUserDocument,
@@ -29,7 +30,7 @@ const Login: React.FC<loginProps> = ({}) => {
         cache.writeQuery<CurrentUserQuery>({
           query: CurrentUserDocument,
           data: {
-            __typename: "Query",
+            // __typename: "Query",
             currentUser: data.login,
           },
         });
@@ -84,12 +85,14 @@ const Login: React.FC<loginProps> = ({}) => {
           >
             Sign In
           </button>
-          <a
-            className="inline-block align-baseline font-bold text-sm text-blue hover:text-blue-darker"
-            href="#"
-          >
-            Forgot Password?
-          </a>
+          <NextLink href="/forgot-password">
+            <a
+              className="inline-block align-baseline font-bold text-sm text-blue hover:text-blue-darker"
+              href="#"
+            >
+              Forgot Password?
+            </a>
+          </NextLink>
         </div>
       </div>
     </Layout>
