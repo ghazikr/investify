@@ -1,4 +1,3 @@
-import Head from "next/head";
 import { IdeaItem } from "../components/IdeaItem";
 import { Layout } from "../components/Layout";
 import { useIdeasQuery } from "../generated/graphql";

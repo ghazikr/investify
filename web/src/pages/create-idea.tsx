@@ -1,34 +1,31 @@
 import { useRouter } from "next/dist/client/router";
 import React from "react";
 import { Layout } from "../components/Layout";
-import { useRegisterMutation } from "../generated/graphql";
+import { useCreateIdeaMutation } from "../generated/graphql";
 import { Formik } from "formik";
 import { MyInput } from "../components/MyInput";
-import { toErrorsDict } from "../utils/toErrorsDict";
 import { ActionButton } from "../components/ActionButton";
 
-interface RegisterProps {}
+interface CreateIdeaProps {}
 
-const Register: React.FC<RegisterProps> = ({}) => {
+const CreateIdea: React.FC<CreateIdeaProps> = ({}) => {
   const router = useRouter();
-  const [register] = useRegisterMutation();
+  const [createIdea] = useCreateIdeaMutation();
 
   return (
     <Layout>
       <div className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4 flex flex-col">
         <Formik
           initialValues={{
-            email: "",
-            username: "",
-            password: "",
+            title: "",
+            description: "",
+            cost: 0,
           }}
-          onSubmit={async (options, { setErrors }) => {
-            const response = await register({
-              variables: { options },
+          onSubmit={async (variables) => {
+            const { errors } = await createIdea({
+              variables,
             });
-            if (response.data?.register.errors) {
-              setErrors(toErrorsDict(response.data.register.errors));
-            } else if (response.data?.register.user) {
+            if (!errors) {
               router.push("/");
             }
           }}
@@ -41,26 +38,26 @@ const Register: React.FC<RegisterProps> = ({}) => {
               }}
             >
               <MyInput
-                label="Username"
-                name="username"
+                label="Title"
+                name="title"
                 type="text"
                 placeholder="smartInvestor"
               />
               <MyInput
-                label="Email"
-                name="email"
+                label="Description"
+                name="description"
                 type="text"
-                placeholder="test@test.com"
+                placeholder="description..."
               />
               <MyInput
-                label="Password"
-                name="password"
-                type="password"
-                placeholder="*******"
+                label="Cost"
+                name="cost"
+                type="number"
+                placeholder="Cost..."
               />
 
               <div className="flex items-center justify-between">
-                <ActionButton label="Register" isSubmitting={isSubmitting} />
+                <ActionButton label="Create Idea" isSubmitting={isSubmitting} />
               </div>
             </form>
           )}
@@ -70,4 +67,4 @@ const Register: React.FC<RegisterProps> = ({}) => {
   );
 };
 
-export default Register;
+export default CreateIdea;

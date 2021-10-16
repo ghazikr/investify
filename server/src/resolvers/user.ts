@@ -35,7 +35,7 @@ class UserResponse {
 
 @Resolver()
 export class UserResolver {
-  @Mutation(() => UserResponse, { nullable: true })
+  @Mutation(() => UserResponse)
   async register(
     @Arg("options") { username, password, email }: UserInput,
     @Ctx() { req }: MyContext
@@ -80,7 +80,7 @@ export class UserResolver {
     return user;
   }
 
-  @Mutation(() => UserResponse, { nullable: true })
+  @Mutation(() => UserResponse)
   async login(
     @Arg("email") email: string,
     @Arg("password") password: string,
@@ -135,7 +135,7 @@ export class UserResolver {
     return true;
   }
 
-  @Mutation(() => UserResponse, { nullable: true })
+  @Mutation(() => UserResponse)
   async changePassword(
     @Arg("token") token: string,
     @Arg("newPassword") newPassword: string,

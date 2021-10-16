@@ -33,12 +33,12 @@ export type Idea = {
 
 export type Mutation = {
   __typename?: 'Mutation';
-  changePassword?: Maybe<UserResponse>;
+  changePassword: UserResponse;
   createIdea?: Maybe<Idea>;
   forgotPassword: Scalars['Boolean'];
-  login?: Maybe<UserResponse>;
+  login: UserResponse;
   logout: Scalars['Boolean'];
-  register?: Maybe<UserResponse>;
+  register: UserResponse;
 };
 
 
@@ -110,7 +110,16 @@ export type ChangePasswordMutationVariables = Exact<{
 }>;
 
 
-export type ChangePasswordMutation = { __typename?: 'Mutation', changePassword?: { __typename?: 'UserResponse', errors?: Array<{ __typename?: 'FieldError', field: string, message: string }> | null | undefined, user?: { __typename?: 'User', email: string, username: string } | null | undefined } | null | undefined };
+export type ChangePasswordMutation = { __typename?: 'Mutation', changePassword: { __typename?: 'UserResponse', errors?: Array<{ __typename?: 'FieldError', field: string, message: string }> | null | undefined, user?: { __typename?: 'User', email: string, username: string } | null | undefined } };
+
+export type CreateIdeaMutationVariables = Exact<{
+  title: Scalars['String'];
+  description: Scalars['String'];
+  cost: Scalars['Float'];
+}>;
+
+
+export type CreateIdeaMutation = { __typename?: 'Mutation', createIdea?: { __typename?: 'Idea', id: number, title: string, userId: number } | null | undefined };
 
 export type ForgotPasswordMutationVariables = Exact<{
   email: Scalars['String'];
@@ -125,7 +134,7 @@ export type LoginMutationVariables = Exact<{
 }>;
 
 
-export type LoginMutation = { __typename?: 'Mutation', login?: { __typename?: 'UserResponse', errors?: Array<{ __typename?: 'FieldError', field: string, message: string }> | null | undefined, user?: { __typename?: 'User', email: string, username: string } | null | undefined } | null | undefined };
+export type LoginMutation = { __typename?: 'Mutation', login: { __typename?: 'UserResponse', errors?: Array<{ __typename?: 'FieldError', field: string, message: string }> | null | undefined, user?: { __typename?: 'User', email: string, username: string } | null | undefined } };
 
 export type LogoutMutationVariables = Exact<{ [key: string]: never; }>;
 
@@ -137,7 +146,7 @@ export type RegisterMutationVariables = Exact<{
 }>;
 
 
-export type RegisterMutation = { __typename?: 'Mutation', register?: { __typename?: 'UserResponse', errors?: Array<{ __typename?: 'FieldError', field: string, message: string }> | null | undefined, user?: { __typename?: 'User', email: string, username: string } | null | undefined } | null | undefined };
+export type RegisterMutation = { __typename?: 'Mutation', register: { __typename?: 'UserResponse', errors?: Array<{ __typename?: 'FieldError', field: string, message: string }> | null | undefined, user?: { __typename?: 'User', email: string, username: string } | null | undefined } };
 
 export type CurrentUserQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -206,6 +215,43 @@ export function useChangePasswordMutation(baseOptions?: Apollo.MutationHookOptio
 export type ChangePasswordMutationHookResult = ReturnType<typeof useChangePasswordMutation>;
 export type ChangePasswordMutationResult = Apollo.MutationResult<ChangePasswordMutation>;
 export type ChangePasswordMutationOptions = Apollo.BaseMutationOptions<ChangePasswordMutation, ChangePasswordMutationVariables>;
+export const CreateIdeaDocument = gql`
+    mutation CreateIdea($title: String!, $description: String!, $cost: Float!) {
+  createIdea(title: $title, description: $description, cost: $cost) {
+    id
+    title
+    userId
+  }
+}
+    `;
+export type CreateIdeaMutationFn = Apollo.MutationFunction<CreateIdeaMutation, CreateIdeaMutationVariables>;
+
+/**
+ * __useCreateIdeaMutation__
+ *
+ * To run a mutation, you first call `useCreateIdeaMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateIdeaMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createIdeaMutation, { data, loading, error }] = useCreateIdeaMutation({
+ *   variables: {
+ *      title: // value for 'title'
+ *      description: // value for 'description'
+ *      cost: // value for 'cost'
+ *   },
+ * });
+ */
+export function useCreateIdeaMutation(baseOptions?: Apollo.MutationHookOptions<CreateIdeaMutation, CreateIdeaMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateIdeaMutation, CreateIdeaMutationVariables>(CreateIdeaDocument, options);
+      }
+export type CreateIdeaMutationHookResult = ReturnType<typeof useCreateIdeaMutation>;
+export type CreateIdeaMutationResult = Apollo.MutationResult<CreateIdeaMutation>;
+export type CreateIdeaMutationOptions = Apollo.BaseMutationOptions<CreateIdeaMutation, CreateIdeaMutationVariables>;
 export const ForgotPasswordDocument = gql`
     mutation ForgotPassword($email: String!) {
   forgotPassword(email: $email)

@@ -1,0 +1,7 @@
+mutation CreateIdea($title: String!, $description: String!, $cost: Float!) {
+  createIdea(title: $title, description: $description, cost: $cost) {
+    id
+    title
+    userId
+  }
+}
