@@ -5,6 +5,7 @@ import React, { useState } from "react";
 import NextLink from "next/link";
 import { MyInput } from "../../components/MyInput";
 import { useChangePasswordMutation } from "../../generated/graphql";
+import { toErrorsDict } from "../../utils/toErrorsDict";
 
 const ChangePassword: NextPage = () => {
   const router = useRouter();
@@ -13,7 +14,7 @@ const ChangePassword: NextPage = () => {
   return (
     <Formik
       initialValues={{ newPassword: "" }}
-      onSubmit={async (values) => {
+      onSubmit={async (values, { setErrors }) => {
         const response = await changePassword({
           variables: {
             newPassword: values.newPassword,
@@ -21,7 +22,9 @@ const ChangePassword: NextPage = () => {
               typeof router.query.token === "string" ? router.query.token : "",
           },
         });
-        if (response.data?.changePassword) {
+        if (response.data?.changePassword.errors) {
+          setErrors(toErrorsDict(response.data.changePassword.errors));
+        } else if (response.data?.changePassword.user) {
           router.push("/");
         }
       }}

@@ -14,6 +14,12 @@ export type Scalars = {
   Float: number;
 };
 
+export type FieldError = {
+  __typename?: 'FieldError';
+  field: Scalars['String'];
+  message: Scalars['String'];
+};
+
 export type Idea = {
   __typename?: 'Idea';
   cost: Scalars['Float'];
@@ -27,12 +33,12 @@ export type Idea = {
 
 export type Mutation = {
   __typename?: 'Mutation';
-  changePassword?: Maybe<User>;
+  changePassword?: Maybe<UserResponse>;
   createIdea?: Maybe<Idea>;
   forgotPassword: Scalars['Boolean'];
-  login?: Maybe<User>;
+  login?: Maybe<UserResponse>;
   logout: Scalars['Boolean'];
-  register?: Maybe<User>;
+  register?: Maybe<UserResponse>;
 };
 
 
@@ -86,7 +92,17 @@ export type UserInput = {
   username: Scalars['String'];
 };
 
-export type UserResponseFragment = { __typename?: 'User', email: string, username: string };
+export type UserResponse = {
+  __typename?: 'UserResponse';
+  errors?: Maybe<Array<FieldError>>;
+  user?: Maybe<User>;
+};
+
+export type ErrorFragFragment = { __typename?: 'FieldError', field: string, message: string };
+
+export type UserFragFragment = { __typename?: 'User', email: string, username: string };
+
+export type UserResponseFragFragment = { __typename?: 'UserResponse', errors?: Array<{ __typename?: 'FieldError', field: string, message: string }> | null | undefined, user?: { __typename?: 'User', email: string, username: string } | null | undefined };
 
 export type ChangePasswordMutationVariables = Exact<{
   token: Scalars['String'];
@@ -94,7 +110,7 @@ export type ChangePasswordMutationVariables = Exact<{
 }>;
 
 
-export type ChangePasswordMutation = { __typename?: 'Mutation', changePassword?: { __typename?: 'User', email: string, username: string } | null | undefined };
+export type ChangePasswordMutation = { __typename?: 'Mutation', changePassword?: { __typename?: 'UserResponse', errors?: Array<{ __typename?: 'FieldError', field: string, message: string }> | null | undefined, user?: { __typename?: 'User', email: string, username: string } | null | undefined } | null | undefined };
 
 export type ForgotPasswordMutationVariables = Exact<{
   email: Scalars['String'];
@@ -109,7 +125,7 @@ export type LoginMutationVariables = Exact<{
 }>;
 
 
-export type LoginMutation = { __typename?: 'Mutation', login?: { __typename?: 'User', email: string, username: string } | null | undefined };
+export type LoginMutation = { __typename?: 'Mutation', login?: { __typename?: 'UserResponse', errors?: Array<{ __typename?: 'FieldError', field: string, message: string }> | null | undefined, user?: { __typename?: 'User', email: string, username: string } | null | undefined } | null | undefined };
 
 export type LogoutMutationVariables = Exact<{ [key: string]: never; }>;
 
@@ -121,7 +137,7 @@ export type RegisterMutationVariables = Exact<{
 }>;
 
 
-export type RegisterMutation = { __typename?: 'Mutation', register?: { __typename?: 'User', email: string, username: string } | null | undefined };
+export type RegisterMutation = { __typename?: 'Mutation', register?: { __typename?: 'UserResponse', errors?: Array<{ __typename?: 'FieldError', field: string, message: string }> | null | undefined, user?: { __typename?: 'User', email: string, username: string } | null | undefined } | null | undefined };
 
 export type CurrentUserQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -133,24 +149,36 @@ export type IdeasQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type IdeasQuery = { __typename?: 'Query', ideas: Array<{ __typename?: 'Idea', id: number, title: string, description: string, cost: number }> };
 
-export type TestQueryVariables = Exact<{ [key: string]: never; }>;
-
-
-export type TestQuery = { __typename?: 'Query', test: string };
-
-export const UserResponseFragmentDoc = gql`
-    fragment UserResponse on User {
+export const ErrorFragFragmentDoc = gql`
+    fragment ErrorFrag on FieldError {
+  field
+  message
+}
+    `;
+export const UserFragFragmentDoc = gql`
+    fragment UserFrag on User {
   email
   username
 }
     `;
+export const UserResponseFragFragmentDoc = gql`
+    fragment UserResponseFrag on UserResponse {
+  errors {
+    ...ErrorFrag
+  }
+  user {
+    ...UserFrag
+  }
+}
+    ${ErrorFragFragmentDoc}
+${UserFragFragmentDoc}`;
 export const ChangePasswordDocument = gql`
     mutation ChangePassword($token: String!, $newPassword: String!) {
   changePassword(token: $token, newPassword: $newPassword) {
-    ...UserResponse
+    ...UserResponseFrag
   }
 }
-    ${UserResponseFragmentDoc}`;
+    ${UserResponseFragFragmentDoc}`;
 export type ChangePasswordMutationFn = Apollo.MutationFunction<ChangePasswordMutation, ChangePasswordMutationVariables>;
 
 /**
@@ -212,10 +240,10 @@ export type ForgotPasswordMutationOptions = Apollo.BaseMutationOptions<ForgotPas
 export const LoginDocument = gql`
     mutation Login($email: String!, $password: String!) {
   login(email: $email, password: $password) {
-    ...UserResponse
+    ...UserResponseFrag
   }
 }
-    ${UserResponseFragmentDoc}`;
+    ${UserResponseFragFragmentDoc}`;
 export type LoginMutationFn = Apollo.MutationFunction<LoginMutation, LoginMutationVariables>;
 
 /**
@@ -276,10 +304,10 @@ export type LogoutMutationOptions = Apollo.BaseMutationOptions<LogoutMutation, L
 export const RegisterDocument = gql`
     mutation Register($options: UserInput!) {
   register(options: $options) {
-    ...UserResponse
+    ...UserResponseFrag
   }
 }
-    ${UserResponseFragmentDoc}`;
+    ${UserResponseFragFragmentDoc}`;
 export type RegisterMutationFn = Apollo.MutationFunction<RegisterMutation, RegisterMutationVariables>;
 
 /**
@@ -309,10 +337,10 @@ export type RegisterMutationOptions = Apollo.BaseMutationOptions<RegisterMutatio
 export const CurrentUserDocument = gql`
     query CurrentUser {
   currentUser {
-    ...UserResponse
+    ...UserFrag
   }
 }
-    ${UserResponseFragmentDoc}`;
+    ${UserFragFragmentDoc}`;
 
 /**
  * __useCurrentUserQuery__
@@ -377,35 +405,3 @@ export function useIdeasLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Idea
 export type IdeasQueryHookResult = ReturnType<typeof useIdeasQuery>;
 export type IdeasLazyQueryHookResult = ReturnType<typeof useIdeasLazyQuery>;
 export type IdeasQueryResult = Apollo.QueryResult<IdeasQuery, IdeasQueryVariables>;
-export const TestDocument = gql`
-    query Test {
-  test
-}
-    `;
-
-/**
- * __useTestQuery__
- *
- * To run a query within a React component, call `useTestQuery` and pass it any options that fit your needs.
- * When your component renders, `useTestQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useTestQuery({
- *   variables: {
- *   },
- * });
- */
-export function useTestQuery(baseOptions?: Apollo.QueryHookOptions<TestQuery, TestQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<TestQuery, TestQueryVariables>(TestDocument, options);
-      }
-export function useTestLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<TestQuery, TestQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<TestQuery, TestQueryVariables>(TestDocument, options);
-        }
-export type TestQueryHookResult = ReturnType<typeof useTestQuery>;
-export type TestLazyQueryHookResult = ReturnType<typeof useTestLazyQuery>;
-export type TestQueryResult = Apollo.QueryResult<TestQuery, TestQueryVariables>;

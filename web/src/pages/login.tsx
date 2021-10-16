@@ -6,10 +6,10 @@ import {
   CurrentUserDocument,
   CurrentUserQuery,
   useLoginMutation,
-  useTestQuery,
 } from "../generated/graphql";
 import { Formik } from "formik";
 import { MyInput } from "../components/MyInput";
+import { toErrorsDict } from "../utils/toErrorsDict";
 
 interface loginProps {}
 
@@ -25,20 +25,23 @@ const Login: React.FC<loginProps> = ({}) => {
             email: "",
             password: "",
           }}
-          onSubmit={async (variables) => {
+          onSubmit={async (variables, { setErrors }) => {
             const response = await login({
               variables,
               update: (cache, { data }) => {
                 cache.writeQuery<CurrentUserQuery>({
                   query: CurrentUserDocument,
                   data: {
-                    // __typename: "Query",
-                    currentUser: data.login,
+                    __typename: "Query",
+                    currentUser: data.login.user,
                   },
                 });
               },
             });
-            if (response.data.login) {
+
+            if (response.data.login.errors) {
+              setErrors(toErrorsDict(response.data.login.errors));
+            } else if (response.data.login.user) {
               router.push("/");
             }
           }}

@@ -1,5 +1,13 @@
 import { MyContext } from "src/types";
-import { Arg, Ctx, Mutation, Query, Resolver } from "type-graphql";
+import {
+  Arg,
+  Ctx,
+  Field,
+  Mutation,
+  ObjectType,
+  Query,
+  Resolver,
+} from "type-graphql";
 import argon2 from "argon2";
 import { v4 } from "uuid";
 import { User } from "../entities/User";
@@ -7,13 +15,31 @@ import { getConnection } from "typeorm";
 import { UserInput } from "./UserInput";
 import { sendEmail } from "../utils/sendEmail";
 
+@ObjectType()
+class FieldError {
+  @Field()
+  field: string;
+
+  @Field()
+  message: string;
+}
+
+@ObjectType()
+class UserResponse {
+  @Field(() => [FieldError], { nullable: true })
+  errors?: FieldError[];
+
+  @Field(() => User, { nullable: true })
+  user?: User;
+}
+
 @Resolver()
 export class UserResolver {
-  @Mutation(() => User, { nullable: true })
+  @Mutation(() => UserResponse, { nullable: true })
   async register(
     @Arg("options") { username, password, email }: UserInput,
     @Ctx() { req }: MyContext
-  ): Promise<User | null> {
+  ): Promise<UserResponse> {
     const hashedPassword = await argon2.hash(password);
     let user;
     try {
@@ -31,12 +57,19 @@ export class UserResolver {
       user = result.raw[0];
     } catch (error) {
       if (error.code === "23505") {
-        // duplicate username error
-        return null;
+        // duplicate email error
+        return {
+          errors: [
+            {
+              field: "email",
+              message: "duplicate email",
+            },
+          ],
+        };
       }
     }
     req.session.userId = user.id;
-    return user;
+    return { user };
   }
 
   @Query(() => User, { nullable: true })
@@ -47,23 +80,33 @@ export class UserResolver {
     return user;
   }
 
-  @Mutation(() => User, { nullable: true })
+  @Mutation(() => UserResponse, { nullable: true })
   async login(
     @Arg("email") email: string,
     @Arg("password") password: string,
     @Ctx() { req }: MyContext
-  ): Promise<User | null> {
+  ): Promise<UserResponse> {
     const user = await User.findOne({ where: { email } });
-    if (!user) return null;
+    if (!user)
+      return {
+        errors: [
+          {
+            field: "email",
+            message: "email doesnt exist",
+          },
+        ],
+      };
 
     const isValid = await argon2.verify(user.password, password);
 
     if (!isValid) {
-      return null;
+      return {
+        errors: [{ field: "password", message: "wrong password!" }],
+      };
     }
 
     req.session.userId = user.id;
-    return user;
+    return { user };
   }
 
   @Mutation(() => Boolean)
@@ -76,8 +119,6 @@ export class UserResolver {
       //email not in db
       return true;
     }
-    console.log("jjj", redis);
-
     const token = v4();
     await redis.set(
       "forget-password" + token,
@@ -94,27 +135,48 @@ export class UserResolver {
     return true;
   }
 
-  @Mutation(() => User, { nullable: true })
+  @Mutation(() => UserResponse, { nullable: true })
   async changePassword(
     @Arg("token") token: string,
     @Arg("newPassword") newPassword: string,
     @Ctx() { redis, req }: MyContext
-  ): Promise<User | null> {
+  ): Promise<UserResponse> {
     if (newPassword.length < 3) {
-      return null;
+      return {
+        errors: [
+          {
+            field: "newPassword",
+            message: "length must be greater than 3",
+          },
+        ],
+      };
     }
     const key = "forget-password" + token;
     const userId = await redis.get(key);
 
     if (!userId) {
-      return null;
+      return {
+        errors: [
+          {
+            field: "token",
+            message: "token expired",
+          },
+        ],
+      };
     }
 
     const userIdNum = parseInt(userId);
     const user = await User.findOne(userId);
 
     if (!user) {
-      return null;
+      return {
+        errors: [
+          {
+            field: "token",
+            message: "user no longer exists",
+          },
+        ],
+      };
     }
 
     await User.update(
@@ -125,7 +187,7 @@ export class UserResolver {
     req.session.userId = userId;
     redis.del(key);
 
-    return user;
+    return { user };
   }
 
   @Mutation(() => Boolean)

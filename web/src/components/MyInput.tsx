@@ -9,7 +9,7 @@ interface MyInputProps {
 }
 
 export const MyInput: React.FC<MyInputProps> = ({ label, ...props }) => {
-  const [field] = useField(props);
+  const [field, { error }] = useField(props);
 
   return (
     <div className="mb-4">
@@ -21,6 +21,7 @@ export const MyInput: React.FC<MyInputProps> = ({ label, ...props }) => {
         {...field}
         {...props}
       />
+      {error ? <p className="text-red-500 text-xs italic">{error}</p> : null}
     </div>
   );
 };

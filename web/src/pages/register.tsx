@@ -11,6 +11,7 @@ import {
 } from "../generated/graphql";
 import { Formik } from "formik";
 import { MyInput } from "../components/MyInput";
+import { toErrorsDict } from "../utils/toErrorsDict";
 
 interface loginProps {}
 
@@ -27,11 +28,13 @@ const Register: React.FC<loginProps> = ({}) => {
             username: "",
             password: "",
           }}
-          onSubmit={async (options) => {
+          onSubmit={async (options, { setErrors }) => {
             const response = await register({
               variables: { options },
             });
-            if (response.data.register) {
+            if (response.data.register.errors) {
+              setErrors(toErrorsDict(response.data.register.errors));
+            } else if (response.data.register.user) {
               router.push("/");
             }
           }}
