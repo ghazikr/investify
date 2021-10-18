@@ -70,11 +70,22 @@ export type MutationRegisterArgs = {
   options: UserInput;
 };
 
+export type PaginatedIdeas = {
+  __typename?: 'PaginatedIdeas';
+  hasMore: Scalars['Boolean'];
+  ideas: Array<Idea>;
+};
+
 export type Query = {
   __typename?: 'Query';
   currentUser?: Maybe<User>;
-  ideas: Array<Idea>;
-  test: Scalars['String'];
+  ideas: PaginatedIdeas;
+};
+
+
+export type QueryIdeasArgs = {
+  cursor?: Maybe<Scalars['String']>;
+  limit: Scalars['Int'];
 };
 
 export type User = {
@@ -153,10 +164,13 @@ export type CurrentUserQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type CurrentUserQuery = { __typename?: 'Query', currentUser?: { __typename?: 'User', email: string, username: string } | null | undefined };
 
-export type IdeasQueryVariables = Exact<{ [key: string]: never; }>;
+export type IdeasQueryVariables = Exact<{
+  limit: Scalars['Int'];
+  cursor?: Maybe<Scalars['String']>;
+}>;
 
 
-export type IdeasQuery = { __typename?: 'Query', ideas: Array<{ __typename?: 'Idea', id: number, title: string, description: string, cost: number }> };
+export type IdeasQuery = { __typename?: 'Query', ideas: { __typename?: 'PaginatedIdeas', hasMore: boolean, ideas: Array<{ __typename?: 'Idea', id: number, title: string, description: string, cost: number, createdAt: string }> } };
 
 export const ErrorFragFragmentDoc = gql`
     fragment ErrorFrag on FieldError {
@@ -415,12 +429,16 @@ export type CurrentUserQueryHookResult = ReturnType<typeof useCurrentUserQuery>;
 export type CurrentUserLazyQueryHookResult = ReturnType<typeof useCurrentUserLazyQuery>;
 export type CurrentUserQueryResult = Apollo.QueryResult<CurrentUserQuery, CurrentUserQueryVariables>;
 export const IdeasDocument = gql`
-    query Ideas {
-  ideas {
-    id
-    title
-    description
-    cost
+    query Ideas($limit: Int!, $cursor: String) {
+  ideas(limit: $limit, cursor: $cursor) {
+    ideas {
+      id
+      title
+      description
+      cost
+      createdAt
+    }
+    hasMore
   }
 }
     `;
@@ -437,10 +455,12 @@ export const IdeasDocument = gql`
  * @example
  * const { data, loading, error } = useIdeasQuery({
  *   variables: {
+ *      limit: // value for 'limit'
+ *      cursor: // value for 'cursor'
  *   },
  * });
  */
-export function useIdeasQuery(baseOptions?: Apollo.QueryHookOptions<IdeasQuery, IdeasQueryVariables>) {
+export function useIdeasQuery(baseOptions: Apollo.QueryHookOptions<IdeasQuery, IdeasQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
         return Apollo.useQuery<IdeasQuery, IdeasQueryVariables>(IdeasDocument, options);
       }

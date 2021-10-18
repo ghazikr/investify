@@ -1,8 +1,12 @@
-query Ideas {
-  ideas {
-    id
-    title
-    description
-    cost
+query Ideas($limit: Int!, $cursor: String) {
+  ideas(limit: $limit, cursor: $cursor) {
+    ideas {
+      id
+      title
+      description
+      cost
+      createdAt
+    }
+    hasMore
   }
 }

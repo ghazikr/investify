@@ -1,6 +1,24 @@
 import { MyContext } from "src/types";
-import { Arg, Ctx, Mutation, Query, Resolver } from "type-graphql";
+import {
+  Arg,
+  Ctx,
+  Field,
+  Int,
+  Mutation,
+  ObjectType,
+  Query,
+  Resolver,
+} from "type-graphql";
+import { getConnection } from "typeorm";
 import { Idea } from "../entities/Idea";
+
+@ObjectType()
+class PaginatedIdeas {
+  @Field(() => [Idea])
+  ideas: Idea[];
+  @Field()
+  hasMore: boolean;
+}
 
 @Resolver()
 export class IdeaResolver {
@@ -19,8 +37,32 @@ export class IdeaResolver {
     }).save();
   }
 
-  @Query(() => [Idea])
-  async ideas() {
-    return await Idea.find({});
+  @Query(() => PaginatedIdeas)
+  async ideas(
+    @Arg("limit", () => Int) limit: number,
+    @Arg("cursor", () => String, { nullable: true }) cursor: string | null
+  ): Promise<PaginatedIdeas> {
+    const currentLimit = Math.min(50, limit);
+    const currentLimitPlusOne = currentLimit + 1;
+
+    const values: any[] = [currentLimitPlusOne];
+
+    if (cursor) values.push(new Date(parseInt(cursor)));
+
+    const ideas = await getConnection().query(
+      `
+     select i.*
+     from idea i
+     ${cursor ? `where i."createdAt" < $2` : ""}
+     order by i."createdAt" DESC
+     limit $1
+     `,
+      values
+    );
+
+    return {
+      ideas: ideas.slice(0, currentLimit),
+      hasMore: ideas.length === currentLimitPlusOne,
+    };
   }
 }

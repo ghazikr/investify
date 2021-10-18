@@ -4,7 +4,6 @@ import { ApolloServer } from "apollo-server-express";
 import express from "express";
 import "reflect-metadata";
 import { buildSchema } from "type-graphql";
-import { TestResolver } from "./resolvers/test";
 import { createConnection } from "typeorm";
 import path from "path";
 import { User } from "./entities/User";
@@ -63,7 +62,7 @@ const main = async () => {
 
   const apolloServer = new ApolloServer({
     schema: await buildSchema({
-      resolvers: [TestResolver, UserResolver, IdeaResolver],
+      resolvers: [UserResolver, IdeaResolver],
       validate: false,
     }),
     context: ({ req, res }: MyContext) => ({ req, redis, res }),
