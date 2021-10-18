@@ -11,6 +11,7 @@ import { Formik } from "formik";
 import { MyInput } from "../components/MyInput";
 import { toErrorsDict } from "../utils/toErrorsDict";
 import { ActionButton } from "../components/ActionButton";
+import { withApollo } from "../utils/withApollo";
 
 interface loginProps {}
 
@@ -86,4 +87,4 @@ const Login: React.FC<loginProps> = ({}) => {
   );
 };
 
-export default Login;
+export default withApollo({ ssr: false })(Login);

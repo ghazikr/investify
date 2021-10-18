@@ -6,7 +6,10 @@ import { useApolloClient } from "@apollo/client";
 interface HeaderProps {}
 
 export const Header: React.FC<HeaderProps> = ({}) => {
-  const { data } = useCurrentUserQuery();
+  const { data } = useCurrentUserQuery({
+    skip: typeof window === "undefined", // do not run query on server
+  });
+
   const [logout] = useLogoutMutation();
   const client = useApolloClient();
   return (

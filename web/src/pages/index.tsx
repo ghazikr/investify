@@ -1,8 +1,9 @@
 import { IdeaItem } from "../components/IdeaItem";
 import { Layout } from "../components/Layout";
 import { useIdeasQuery } from "../generated/graphql";
+import { withApollo } from "../utils/withApollo";
 
-export default function Home() {
+function Home() {
   const { data, fetchMore, variables } = useIdeasQuery({
     variables: {
       limit: 2,
@@ -21,20 +22,25 @@ export default function Home() {
                 key={id}
               />
             ))}
-            {data?.ideas.hasMore && (
-              <button
-                onClick={() => {
-                  fetchMore({
-                    variables: {
-                      limit: variables?.limit,
-                      cursor:
-                        data.ideas.ideas[data.ideas.ideas.length - 1].createdAt,
-                    },
-                  });
-                }}
-              >
-                load more
-              </button>
+            {!data ? (
+              <div>loading...</div>
+            ) : (
+              data?.ideas.hasMore && (
+                <button
+                  onClick={() => {
+                    fetchMore({
+                      variables: {
+                        limit: variables?.limit,
+                        cursor:
+                          data.ideas.ideas[data.ideas.ideas.length - 1]
+                            .createdAt,
+                      },
+                    });
+                  }}
+                >
+                  load more
+                </button>
+              )
             )}
           </div>
         </div>
@@ -42,3 +48,5 @@ export default function Home() {
     </Layout>
   );
 }
+
+export default withApollo({ ssr: true })(Home);

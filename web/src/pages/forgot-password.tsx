@@ -4,6 +4,7 @@ import { useForgotPasswordMutation } from "../generated/graphql";
 import { Formik } from "formik";
 import { MyInput } from "../components/MyInput";
 import { ActionButton } from "../components/ActionButton";
+import { withApollo } from "../utils/withApollo";
 
 interface loginProps {}
 
@@ -51,4 +52,4 @@ const ForgotPassword: React.FC<loginProps> = ({}) => {
   );
 };
 
-export default ForgotPassword;
+export default withApollo({ ssr: false })(ForgotPassword);

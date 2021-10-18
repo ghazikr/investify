@@ -1,7 +1,8 @@
+import { withApollo as createWithApollo } from "next-apollo";
 import { ApolloClient, InMemoryCache } from "@apollo/client";
 import { PaginatedIdeas } from "../generated/graphql";
 
-const client = new ApolloClient({
+const apolloClient = new ApolloClient({
   uri: "http://localhost:4000/graphql",
   cache: new InMemoryCache({
     typePolicies: {
@@ -25,5 +26,4 @@ const client = new ApolloClient({
   }),
   credentials: "include",
 });
-
-export default client;
+export const withApollo = createWithApollo(apolloClient);

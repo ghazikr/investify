@@ -5,6 +5,7 @@ import { useCreateIdeaMutation } from "../generated/graphql";
 import { Formik } from "formik";
 import { MyInput } from "../components/MyInput";
 import { ActionButton } from "../components/ActionButton";
+import { withApollo } from "../utils/withApollo";
 
 interface CreateIdeaProps {}
 
@@ -67,4 +68,4 @@ const CreateIdea: React.FC<CreateIdeaProps> = ({}) => {
   );
 };
 
-export default CreateIdea;
+export default withApollo({ ssr: false })(CreateIdea);

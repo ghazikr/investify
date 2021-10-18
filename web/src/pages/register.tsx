@@ -6,6 +6,7 @@ import { Formik } from "formik";
 import { MyInput } from "../components/MyInput";
 import { toErrorsDict } from "../utils/toErrorsDict";
 import { ActionButton } from "../components/ActionButton";
+import { withApollo } from "../utils/withApollo";
 
 interface RegisterProps {}
 
@@ -70,4 +71,4 @@ const Register: React.FC<RegisterProps> = ({}) => {
   );
 };
 
-export default Register;
+export default withApollo({ ssr: false })(Register);

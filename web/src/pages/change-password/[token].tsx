@@ -6,6 +6,7 @@ import { MyInput } from "../../components/MyInput";
 import { useChangePasswordMutation } from "../../generated/graphql";
 import { toErrorsDict } from "../../utils/toErrorsDict";
 import { ActionButton } from "../../components/ActionButton";
+import { withApollo } from "../../utils/withApollo";
 
 const ChangePassword: NextPage = () => {
   const router = useRouter();
@@ -44,4 +45,4 @@ const ChangePassword: NextPage = () => {
   );
 };
 
-export default ChangePassword;
+export default withApollo({ ssr: false })(ChangePassword);
