@@ -1,6 +1,6 @@
 import { ApolloQueryResult } from "@apollo/client";
 import { Transition } from "@headlessui/react";
-import React, { useRef } from "react";
+import React, { LegacyRef, useRef } from "react";
 import { IconType } from "react-icons/lib";
 import useOutsideCloser from "../hooks/useOutsideCloser";
 
@@ -31,7 +31,7 @@ const DropDownMenu = ({ isOpen, items, setIsOpen }: Props) => {
         leaveFrom="opacity-100 scale-100"
         leaveTo="opacity-0 scale-95"
       >
-        {(ref) => (
+        {(ref: LegacyRef<HTMLUListElement> | undefined) => (
           <ul
             ref={ref}
             className="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5"

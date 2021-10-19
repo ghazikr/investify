@@ -6,11 +6,14 @@ import { Formik } from "formik";
 import { MyInput } from "../components/MyInput";
 import { ActionButton } from "../components/ActionButton";
 import { withApollo } from "../utils/withApollo";
+import { useIsAuth } from "../hooks/useIsAuth";
 
 interface CreateIdeaProps {}
 
 const CreateIdea: React.FC<CreateIdeaProps> = ({}) => {
   const router = useRouter();
+
+  useIsAuth();
   const [createIdea] = useCreateIdeaMutation();
 
   return (
@@ -47,7 +50,8 @@ const CreateIdea: React.FC<CreateIdeaProps> = ({}) => {
               <MyInput
                 label="Description"
                 name="description"
-                type="text"
+                type="textarea"
+                textarea
                 placeholder="description..."
               />
               <MyInput

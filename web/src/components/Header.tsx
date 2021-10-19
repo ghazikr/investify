@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import NextLink from "next/link";
 import { BiLogOut } from "react-icons/bi";
-
+import { BsFillFileEarmarkPostFill } from "react-icons/bs";
+import router from "next/router";
 import { useCurrentUserQuery, useLogoutMutation } from "../generated/graphql";
 import { useApolloClient } from "@apollo/client";
 import DropDownMenu from "./DropDownMenu";
@@ -19,6 +20,11 @@ export const Header: React.FC<HeaderProps> = ({}) => {
   const client = useApolloClient();
 
   const dropdownMenuItems = [
+    {
+      label: "Post an idea",
+      onClick: () => router.push("/create-idea"),
+      Icon: BsFillFileEarmarkPostFill,
+    },
     {
       label: "Logout",
       onClick: () => logout().then(() => client.resetStore()),
