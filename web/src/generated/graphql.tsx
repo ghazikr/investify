@@ -28,6 +28,7 @@ export type Idea = {
   id: Scalars['Float'];
   title: Scalars['String'];
   updatedAt: Scalars['String'];
+  user: User;
   userId: Scalars['Float'];
 };
 
@@ -170,7 +171,7 @@ export type IdeasQueryVariables = Exact<{
 }>;
 
 
-export type IdeasQuery = { __typename?: 'Query', ideas: { __typename?: 'PaginatedIdeas', hasMore: boolean, ideas: Array<{ __typename?: 'Idea', id: number, title: string, description: string, cost: number, createdAt: string }> } };
+export type IdeasQuery = { __typename?: 'Query', ideas: { __typename?: 'PaginatedIdeas', hasMore: boolean, ideas: Array<{ __typename?: 'Idea', id: number, title: string, description: string, cost: number, createdAt: string, user: { __typename?: 'User', username: string } }> } };
 
 export const ErrorFragFragmentDoc = gql`
     fragment ErrorFrag on FieldError {
@@ -437,6 +438,9 @@ export const IdeasDocument = gql`
       description
       cost
       createdAt
+      user {
+        username
+      }
     }
     hasMore
   }

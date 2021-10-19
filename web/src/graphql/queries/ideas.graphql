@@ -6,6 +6,9 @@ query Ideas($limit: Int!, $cursor: String) {
       description
       cost
       createdAt
+      user {
+        username
+      }
     }
     hasMore
   }

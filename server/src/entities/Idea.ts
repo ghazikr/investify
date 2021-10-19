@@ -31,8 +31,9 @@ export class Idea extends BaseEntity {
 
   @Field()
   @Column()
-  userId!: number;
+  userId: number;
 
+  @Field(() => User)
   @ManyToOne(() => User, (user) => user.ideas)
   user: User;
 

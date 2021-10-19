@@ -51,8 +51,16 @@ export class IdeaResolver {
 
     const ideas = await getConnection().query(
       `
-     select i.*
+     select i.*,
+     json_build_object(
+      'id', u.id,
+      'username', u.username,
+      'email',u.email,
+      'createdAt', u."createdAt",
+      'updatedAt', u."updatedAt"
+      ) "user"
      from idea i
+     inner join public.user u on u.id = i."userId"
      ${cursor ? `where i."createdAt" < $2` : ""}
      order by i."createdAt" DESC
      limit $1
