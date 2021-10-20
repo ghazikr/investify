@@ -6,19 +6,19 @@ import { withApollo } from "../utils/withApollo";
 function Home() {
   const { data, fetchMore, variables } = useIdeasQuery({
     variables: {
-      limit: 2,
+      limit: 5,
     },
   });
   return (
     <Layout>
-      <div className="container px-5 py-24 mx-auto">
+      <div className="container mx-auto">
         <div className="">
           {data?.ideas.ideas.map(
-            ({ title, cost, description, id, user: { username } }) => (
+            ({ title, cost, descriptionSnippet, id, user: { username } }) => (
               <IdeaItem
                 title={title}
                 cost={cost}
-                description={description}
+                descriptionSnippet={descriptionSnippet}
                 username={username}
                 key={id}
               />

@@ -5,42 +5,32 @@ import { GiBearFace } from "react-icons/gi";
 interface IdeaItemProps {
   title: string;
   cost: number;
-  description: string;
+  descriptionSnippet: string;
   username: string;
 }
 
 export const IdeaItem: React.FC<IdeaItemProps> = ({
   title,
-  description,
+  descriptionSnippet,
   username,
   cost,
 }) => {
   return (
     <div className="mb-4 px-8 py-4 mx-auto bg-white rounded-lg shadow-md dark:bg-gray-800">
-      <div className="flex flex-col">
-        <span className="text-sm font-light text-gray-600 dark:text-gray-400">
-          Mar 10, 2019
-        </span>
-        <a className="italic text-gray-700 cursor-pointer dark:text-gray-200">
-          @{username}
-        </a>
-      </div>
-
-      <div className="mt-2">
+      <div className="mt-2 flex flex-col">
         <a
           href="#"
           className="text-2xl font-bold text-gray-700 dark:text-white hover:text-gray-600 dark:hover:text-gray-200 hover:underline"
         >
           {title}
         </a>
+
+        <div className="text-sm font-light text-gray-600 dark:text-gray-400">
+          <span>Posted by </span>
+          <span className="italic underline">{username}</span>
+        </div>
         <p className="mt-2 text-gray-600 dark:text-gray-300">
-          {description} Lorem ipsum dolor sit amet consectetur adipisicing elit.
-          Optio quisquam minus debitis est cupiditate tenetur! Id praesentium
-          minus fuga debitis, accusamus officiis et maxime sed? Repellendus
-          ducimus impedit asperiores sit. Lorem ipsum dolor sit amet consectetur
-          adipisicing elit. Sed dicta tempore aspernatur. Perspiciatis in
-          mollitia veritatis optio. Consequuntur dolores laborum deleniti.
-          Exercitationem voluptate alias ab fugit fuga, ex praesentium ad.
+          {descriptionSnippet}
         </p>
       </div>
 

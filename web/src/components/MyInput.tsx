@@ -15,6 +15,9 @@ export const MyInput: React.FC<MyInputProps> = ({
   ...props
 }) => {
   const [field, { error }] = useField(props);
+  const allProps = { ...field, ...props };
+  const styles =
+    "shadow appearance-none border rounded w-full py-2 px-3 text-grey-darker";
 
   return (
     <div className="mb-4">
@@ -22,20 +25,13 @@ export const MyInput: React.FC<MyInputProps> = ({
         {label}
       </label>
       {textarea ? (
-        <textarea
-          rows={3}
-          className="shadow appearance-none border rounded w-full py-2 px-3 text-grey-darker"
-          {...field}
-          {...props}
-        />
+        <textarea rows={3} className={styles} {...allProps} />
       ) : (
-        <input
-          className="shadow appearance-none border rounded w-full py-2 px-3 text-grey-darker"
-          {...field}
-          {...props}
-        />
+        <input className={styles} {...allProps} />
       )}
-      {error ? <p className="text-red-500 text-xs italic">{error}</p> : null}
+      {error ? (
+        <p className="text-red-500 text-xs italic pt-2">{error}</p>
+      ) : null}
     </div>
   );
 };

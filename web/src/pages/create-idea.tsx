@@ -28,6 +28,9 @@ const CreateIdea: React.FC<CreateIdeaProps> = ({}) => {
           onSubmit={async (variables) => {
             const { errors } = await createIdea({
               variables,
+              update: (cache) => {
+                cache.evict({ fieldName: "ideas" });
+              },
             });
             if (!errors) {
               router.push("/");
@@ -45,7 +48,7 @@ const CreateIdea: React.FC<CreateIdeaProps> = ({}) => {
                 label="Title"
                 name="title"
                 type="text"
-                placeholder="smartInvestor"
+                placeholder="Smart Investment"
               />
               <MyInput
                 label="Description"

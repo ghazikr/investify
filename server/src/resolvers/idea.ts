@@ -3,11 +3,13 @@ import {
   Arg,
   Ctx,
   Field,
+  FieldResolver,
   Int,
   Mutation,
   ObjectType,
   Query,
   Resolver,
+  Root,
 } from "type-graphql";
 import { getConnection } from "typeorm";
 import { Idea } from "../entities/Idea";
@@ -20,8 +22,13 @@ class PaginatedIdeas {
   hasMore: boolean;
 }
 
-@Resolver()
+@Resolver(Idea)
 export class IdeaResolver {
+  @FieldResolver(() => String)
+  descriptionSnippet(@Root() root: Idea) {
+    return root.description.slice(0, 500) + "...";
+  }
+
   @Mutation(() => Idea, { nullable: true })
   async createIdea(
     @Arg("title") title: string,
