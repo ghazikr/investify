@@ -9,17 +9,27 @@ function Home() {
       limit: 5,
     },
   });
+
   return (
     <Layout>
       <div className="container mx-auto">
         <div className="">
           {data?.ideas.ideas.map(
-            ({ title, cost, descriptionSnippet, id, user: { username } }) => (
+            ({
+              title,
+              cost,
+              nbLikes,
+              descriptionSnippet,
+              id,
+              user: { username },
+            }) => (
               <IdeaItem
                 title={title}
+                id={id}
                 cost={cost}
                 descriptionSnippet={descriptionSnippet}
                 username={username}
+                nbLikes={nbLikes}
                 key={id}
               />
             )

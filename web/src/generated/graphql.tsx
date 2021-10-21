@@ -27,8 +27,19 @@ export type Idea = {
   description: Scalars['String'];
   descriptionSnippet: Scalars['String'];
   id: Scalars['Float'];
+  likeStatus: Scalars['Boolean'];
+  likes: Array<Like>;
+  nbLikes: Scalars['Int'];
   title: Scalars['String'];
   updatedAt: Scalars['String'];
+  user: User;
+  userId: Scalars['Float'];
+};
+
+export type Like = {
+  __typename?: 'Like';
+  idea: Idea;
+  ideaId: Scalars['Float'];
   user: User;
   userId: Scalars['Float'];
 };
@@ -38,6 +49,7 @@ export type Mutation = {
   changePassword: UserResponse;
   createIdea?: Maybe<Idea>;
   forgotPassword: Scalars['Boolean'];
+  like: Scalars['Boolean'];
   login: UserResponse;
   logout: Scalars['Boolean'];
   register: UserResponse;
@@ -59,6 +71,11 @@ export type MutationCreateIdeaArgs = {
 
 export type MutationForgotPasswordArgs = {
   email: Scalars['String'];
+};
+
+
+export type MutationLikeArgs = {
+  ideaId: Scalars['Int'];
 };
 
 
@@ -141,6 +158,13 @@ export type ForgotPasswordMutationVariables = Exact<{
 
 export type ForgotPasswordMutation = { __typename?: 'Mutation', forgotPassword: boolean };
 
+export type LikeMutationVariables = Exact<{
+  ideaId: Scalars['Int'];
+}>;
+
+
+export type LikeMutation = { __typename?: 'Mutation', like: boolean };
+
 export type LoginMutationVariables = Exact<{
   email: Scalars['String'];
   password: Scalars['String'];
@@ -172,7 +196,7 @@ export type IdeasQueryVariables = Exact<{
 }>;
 
 
-export type IdeasQuery = { __typename?: 'Query', ideas: { __typename?: 'PaginatedIdeas', hasMore: boolean, ideas: Array<{ __typename?: 'Idea', id: number, title: string, descriptionSnippet: string, cost: number, createdAt: string, user: { __typename?: 'User', username: string } }> } };
+export type IdeasQuery = { __typename?: 'Query', ideas: { __typename?: 'PaginatedIdeas', hasMore: boolean, ideas: Array<{ __typename?: 'Idea', id: number, title: string, descriptionSnippet: string, cost: number, createdAt: string, nbLikes: number, likeStatus: boolean, user: { __typename?: 'User', id: number, username: string } }> } };
 
 export const ErrorFragFragmentDoc = gql`
     fragment ErrorFrag on FieldError {
@@ -299,6 +323,37 @@ export function useForgotPasswordMutation(baseOptions?: Apollo.MutationHookOptio
 export type ForgotPasswordMutationHookResult = ReturnType<typeof useForgotPasswordMutation>;
 export type ForgotPasswordMutationResult = Apollo.MutationResult<ForgotPasswordMutation>;
 export type ForgotPasswordMutationOptions = Apollo.BaseMutationOptions<ForgotPasswordMutation, ForgotPasswordMutationVariables>;
+export const LikeDocument = gql`
+    mutation Like($ideaId: Int!) {
+  like(ideaId: $ideaId)
+}
+    `;
+export type LikeMutationFn = Apollo.MutationFunction<LikeMutation, LikeMutationVariables>;
+
+/**
+ * __useLikeMutation__
+ *
+ * To run a mutation, you first call `useLikeMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useLikeMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [likeMutation, { data, loading, error }] = useLikeMutation({
+ *   variables: {
+ *      ideaId: // value for 'ideaId'
+ *   },
+ * });
+ */
+export function useLikeMutation(baseOptions?: Apollo.MutationHookOptions<LikeMutation, LikeMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<LikeMutation, LikeMutationVariables>(LikeDocument, options);
+      }
+export type LikeMutationHookResult = ReturnType<typeof useLikeMutation>;
+export type LikeMutationResult = Apollo.MutationResult<LikeMutation>;
+export type LikeMutationOptions = Apollo.BaseMutationOptions<LikeMutation, LikeMutationVariables>;
 export const LoginDocument = gql`
     mutation Login($email: String!, $password: String!) {
   login(email: $email, password: $password) {
@@ -439,7 +494,10 @@ export const IdeasDocument = gql`
       descriptionSnippet
       cost
       createdAt
+      nbLikes
+      likeStatus
       user {
+        id
         username
       }
     }

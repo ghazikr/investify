@@ -6,7 +6,10 @@ query Ideas($limit: Int!, $cursor: String) {
       descriptionSnippet
       cost
       createdAt
+      nbLikes
+      likeStatus
       user {
+        id
         username
       }
     }

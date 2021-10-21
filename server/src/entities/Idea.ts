@@ -9,6 +9,7 @@ import {
 } from "typeorm";
 import { Field, Float, ObjectType } from "type-graphql";
 import { User } from "./User";
+import { Like } from "./Like";
 
 @ObjectType()
 @Entity()
@@ -36,6 +37,10 @@ export class Idea extends BaseEntity {
   @Field(() => User)
   @ManyToOne(() => User, (user) => user.ideas)
   user: User;
+
+  @Field(() => [Like])
+  @ManyToOne(() => Like, (like) => like.idea)
+  likes: Like[];
 
   @Field(() => String)
   @UpdateDateColumn()

@@ -15,6 +15,7 @@ import cors from "cors";
 import { MyContext } from "./types";
 import { Idea } from "./entities/Idea";
 import { IdeaResolver } from "./resolvers/idea";
+import { Like } from "./entities/Like";
 
 const RedisStore = connectRedis(session);
 const redis = new Redis();
@@ -30,7 +31,7 @@ const main = async () => {
     logging: true,
     synchronize: true,
     migrations: [path.join(__dirname, "./migrations/*")],
-    entities: [User, Idea],
+    entities: [User, Idea, Like],
   });
   await connection.runMigrations();
 

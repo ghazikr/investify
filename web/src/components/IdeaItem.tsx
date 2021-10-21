@@ -1,20 +1,69 @@
 import React from "react";
 import { IoMdPricetag } from "react-icons/io";
 import { GiBearFace } from "react-icons/gi";
+import { useLikeMutation } from "../generated/graphql";
+import gql from "graphql-tag";
 
 interface IdeaItemProps {
+  id: number;
   title: string;
   cost: number;
   descriptionSnippet: string;
   username: string;
+  nbLikes: number;
 }
 
 export const IdeaItem: React.FC<IdeaItemProps> = ({
   title,
+  id,
   descriptionSnippet,
   username,
   cost,
+  nbLikes,
 }) => {
+  const [like] = useLikeMutation();
+  const handleLikeClick = async () => {
+    await like({
+      variables: { ideaId: id },
+      update: (cache) => {
+        const cachedIdeaId = "Idea:" + id;
+
+        const data = cache.readFragment<{
+          id: number;
+          nbLikes: number;
+          likeStatus: boolean;
+        }>({
+          id: cachedIdeaId,
+          fragment: gql`
+            fragment _ on Idea {
+              id
+              nbLikes
+              likeStatus
+            }
+          `,
+        });
+
+        if (data) {
+          const newNbLikes = data.likeStatus
+            ? data.nbLikes - 1
+            : data.nbLikes + 1;
+          cache.writeFragment({
+            id: cachedIdeaId,
+            fragment: gql`
+              fragment _ on Idea {
+                nbLikes
+                likeStatus
+              }
+            `,
+            data: {
+              nbLikes: newNbLikes,
+              likeStatus: !data.likeStatus,
+            },
+          });
+        }
+      },
+    });
+  };
   return (
     <div className="mb-4 px-8 py-4 mx-auto bg-white rounded-lg shadow-md dark:bg-gray-800">
       <div className="mt-2 flex flex-col">
@@ -55,8 +104,10 @@ export const IdeaItem: React.FC<IdeaItemProps> = ({
           {cost}&euro;
         </span>
         <span className="text-gray-400 inline-flex items-center leading-none text-sm">
-          <GiBearFace className="w-4 h-4 mr-1" />
-          bears
+          <button onClick={handleLikeClick}>
+            <GiBearFace className="w-4 h-4 mr-1" />
+          </button>
+          {nbLikes}
         </span>
       </div>
     </div>

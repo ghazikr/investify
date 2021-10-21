@@ -1,0 +1,3 @@
+mutation Like($ideaId: Int!) {
+  like(ideaId: $ideaId)
+}

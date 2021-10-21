@@ -1,3 +1,4 @@
+import { Like } from "../entities/Like";
 import { MyContext } from "src/types";
 import {
   Arg,
@@ -29,6 +30,28 @@ export class IdeaResolver {
     return root.description.slice(0, 500) + "...";
   }
 
+  @FieldResolver(() => Int)
+  async nbLikes(@Root() root: Idea) {
+    return await Like.count({
+      where: {
+        ideaId: root.id,
+      },
+    });
+  }
+
+  @FieldResolver(() => Boolean)
+  async likeStatus(@Root() root: Idea, @Ctx() { req }: MyContext) {
+    const row = await Like.findOne({
+      where: {
+        userId: parseInt(req.session.userId),
+        ideaId: root.id,
+      },
+    });
+
+    if (!row) return false;
+    return true;
+  }
+
   @Mutation(() => Idea, { nullable: true })
   async createIdea(
     @Arg("title") title: string,
@@ -42,6 +65,32 @@ export class IdeaResolver {
       cost,
       userId: req.session.userId,
     }).save();
+  }
+
+  @Mutation(() => Boolean)
+  async like(
+    @Arg("ideaId", () => Int) ideaId: number,
+    @Ctx() { req }: MyContext
+  ) {
+    const row = await Like.findOne({
+      where: {
+        userId: req.session.userId,
+        ideaId,
+      },
+    });
+
+    if (!row) {
+      await Like.insert({
+        userId: req.session.userId,
+        ideaId,
+      });
+    } else {
+      await Like.delete({
+        userId: req.session.userId,
+        ideaId,
+      });
+    }
+    return true;
   }
 
   @Query(() => PaginatedIdeas)
