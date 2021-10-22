@@ -11,9 +11,11 @@ import {
   Query,
   Resolver,
   Root,
+  UseMiddleware,
 } from "type-graphql";
 import { getConnection } from "typeorm";
 import { Idea } from "../entities/Idea";
+import { isAuth } from "../middleware/isAuth";
 
 @ObjectType()
 class PaginatedIdeas {
@@ -39,8 +41,12 @@ export class IdeaResolver {
     });
   }
 
-  @FieldResolver(() => Boolean)
+  @FieldResolver(() => Boolean, { nullable: true })
   async likeStatus(@Root() root: Idea, @Ctx() { req }: MyContext) {
+    if (!req.session.userId) {
+      return null;
+    }
+
     const row = await Like.findOne({
       where: {
         userId: parseInt(req.session.userId),
@@ -67,6 +73,7 @@ export class IdeaResolver {
     }).save();
   }
 
+  @UseMiddleware(isAuth)
   @Mutation(() => Boolean)
   async like(
     @Arg("ideaId", () => Int) ideaId: number,

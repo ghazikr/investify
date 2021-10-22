@@ -1,7 +1,11 @@
 import { useRouter } from "next/dist/client/router";
 import React from "react";
 import { Layout } from "../components/Layout";
-import { useRegisterMutation } from "../generated/graphql";
+import {
+  CurrentUserDocument,
+  CurrentUserQuery,
+  useRegisterMutation,
+} from "../generated/graphql";
 import { Formik } from "formik";
 import { MyInput } from "../components/MyInput";
 import { toErrorsDict } from "../utils/toErrorsDict";
@@ -26,6 +30,14 @@ const Register: React.FC<RegisterProps> = ({}) => {
           onSubmit={async (options, { setErrors }) => {
             const response = await register({
               variables: { options },
+              update: (cache, { data }) => {
+                cache.writeQuery<CurrentUserQuery>({
+                  query: CurrentUserDocument,
+                  data: {
+                    currentUser: data?.register.user,
+                  },
+                });
+              },
             });
             if (response.data?.register.errors) {
               setErrors(toErrorsDict(response.data.register.errors));

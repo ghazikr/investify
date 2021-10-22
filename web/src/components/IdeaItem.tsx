@@ -1,7 +1,7 @@
 import React from "react";
 import { IoMdPricetag } from "react-icons/io";
 import { GiBearFace } from "react-icons/gi";
-import { useLikeMutation } from "../generated/graphql";
+import { useCurrentUserQuery, useLikeMutation } from "../generated/graphql";
 import gql from "graphql-tag";
 
 interface IdeaItemProps {
@@ -11,6 +11,7 @@ interface IdeaItemProps {
   descriptionSnippet: string;
   username: string;
   nbLikes: number;
+  likeStatus: boolean;
 }
 
 export const IdeaItem: React.FC<IdeaItemProps> = ({
@@ -19,10 +20,15 @@ export const IdeaItem: React.FC<IdeaItemProps> = ({
   descriptionSnippet,
   username,
   cost,
+  likeStatus,
   nbLikes,
 }) => {
+  const { data } = useCurrentUserQuery();
   const [like] = useLikeMutation();
   const handleLikeClick = async () => {
+    if (!data?.currentUser) {
+      return;
+    }
     await like({
       variables: { ideaId: id },
       update: (cache) => {
@@ -104,7 +110,10 @@ export const IdeaItem: React.FC<IdeaItemProps> = ({
           {cost}&euro;
         </span>
         <span className="text-gray-400 inline-flex items-center leading-none text-sm">
-          <button onClick={handleLikeClick}>
+          <button
+            onClick={handleLikeClick}
+            className={`${likeStatus ? "text-red-600" : ""}`}
+          >
             <GiBearFace className="w-4 h-4 mr-1" />
           </button>
           {nbLikes}

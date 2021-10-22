@@ -57,7 +57,7 @@ export const Header: React.FC<HeaderProps> = ({}) => {
             <div className="ml-3 relative">
               <div>
                 <button
-                  className="bg-gray-800 flex text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-purple-500 focus:ring-white"
+                  className="bg-gray-800 flex text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-purple-500 focus:ring-white"
                   id="user-menu"
                   aria-haspopup="true"
                   onClick={() => setIsUserMenuOpen((old) => !old)}
@@ -84,7 +84,7 @@ export const Header: React.FC<HeaderProps> = ({}) => {
                 </a>
               </NextLink>
               <NextLink href="/login">
-                <a className="mr-5 bg-blue-600 text-white p-2 rounded-md hover:text-gray-200 cursor-pointer">
+                <a className="mr-5 bg-indigo-600 text-white p-2 rounded-md hover:text-gray-200 cursor-pointer">
                   Login
                 </a>
               </NextLink>

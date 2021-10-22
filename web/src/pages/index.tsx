@@ -20,6 +20,7 @@ function Home() {
               cost,
               nbLikes,
               descriptionSnippet,
+              likeStatus,
               id,
               user: { username },
             }) => (
@@ -29,6 +30,7 @@ function Home() {
                 cost={cost}
                 descriptionSnippet={descriptionSnippet}
                 username={username}
+                likeStatus={likeStatus}
                 nbLikes={nbLikes}
                 key={id}
               />
@@ -52,7 +54,7 @@ function Home() {
                   }}
                 >
                   <svg
-                    className="animate-bounce w-6 h-6 text-amber-900"
+                    className="animate-bounce w-6 h-6 text-indigo-600"
                     fill="none"
                     strokeLinecap="round"
                     strokeLinejoin="round"
