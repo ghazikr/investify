@@ -25,12 +25,12 @@ export type Idea = {
   cost: Scalars['Float'];
   createdAt: Scalars['String'];
   description: Scalars['String'];
-  descriptionSnippet: Scalars['String'];
   id: Scalars['Float'];
-  likeStatus: Scalars['Boolean'];
+  likeStatus?: Maybe<Scalars['Boolean']>;
   likes: Array<Like>;
   nbLikes: Scalars['Int'];
   title: Scalars['String'];
+  tldr: Scalars['String'];
   updatedAt: Scalars['String'];
   user: User;
   userId: Scalars['Float'];
@@ -66,6 +66,7 @@ export type MutationCreateIdeaArgs = {
   cost: Scalars['Float'];
   description: Scalars['String'];
   title: Scalars['String'];
+  tldr: Scalars['String'];
 };
 
 
@@ -145,11 +146,12 @@ export type ChangePasswordMutation = { __typename?: 'Mutation', changePassword: 
 export type CreateIdeaMutationVariables = Exact<{
   title: Scalars['String'];
   description: Scalars['String'];
+  tldr: Scalars['String'];
   cost: Scalars['Float'];
 }>;
 
 
-export type CreateIdeaMutation = { __typename?: 'Mutation', createIdea?: { __typename?: 'Idea', id: number, title: string, userId: number } | null | undefined };
+export type CreateIdeaMutation = { __typename?: 'Mutation', createIdea?: { __typename?: 'Idea', id: number, title: string, tldr: string, userId: number } | null | undefined };
 
 export type ForgotPasswordMutationVariables = Exact<{
   email: Scalars['String'];
@@ -196,7 +198,7 @@ export type IdeasQueryVariables = Exact<{
 }>;
 
 
-export type IdeasQuery = { __typename?: 'Query', ideas: { __typename?: 'PaginatedIdeas', hasMore: boolean, ideas: Array<{ __typename?: 'Idea', id: number, title: string, descriptionSnippet: string, cost: number, createdAt: string, nbLikes: number, likeStatus: boolean, user: { __typename?: 'User', id: number, username: string } }> } };
+export type IdeasQuery = { __typename?: 'Query', ideas: { __typename?: 'PaginatedIdeas', hasMore: boolean, ideas: Array<{ __typename?: 'Idea', id: number, title: string, tldr: string, cost: number, createdAt: string, nbLikes: number, likeStatus?: boolean | null | undefined, user: { __typename?: 'User', id: number, username: string } }> } };
 
 export const ErrorFragFragmentDoc = gql`
     fragment ErrorFrag on FieldError {
@@ -256,10 +258,11 @@ export type ChangePasswordMutationHookResult = ReturnType<typeof useChangePasswo
 export type ChangePasswordMutationResult = Apollo.MutationResult<ChangePasswordMutation>;
 export type ChangePasswordMutationOptions = Apollo.BaseMutationOptions<ChangePasswordMutation, ChangePasswordMutationVariables>;
 export const CreateIdeaDocument = gql`
-    mutation CreateIdea($title: String!, $description: String!, $cost: Float!) {
-  createIdea(title: $title, description: $description, cost: $cost) {
+    mutation CreateIdea($title: String!, $description: String!, $tldr: String!, $cost: Float!) {
+  createIdea(title: $title, description: $description, tldr: $tldr, cost: $cost) {
     id
     title
+    tldr
     userId
   }
 }
@@ -281,6 +284,7 @@ export type CreateIdeaMutationFn = Apollo.MutationFunction<CreateIdeaMutation, C
  *   variables: {
  *      title: // value for 'title'
  *      description: // value for 'description'
+ *      tldr: // value for 'tldr'
  *      cost: // value for 'cost'
  *   },
  * });
@@ -491,7 +495,7 @@ export const IdeasDocument = gql`
     ideas {
       id
       title
-      descriptionSnippet
+      tldr
       cost
       createdAt
       nbLikes

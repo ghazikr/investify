@@ -19,7 +19,7 @@ function Home() {
               title,
               cost,
               nbLikes,
-              descriptionSnippet,
+              tldr,
               likeStatus,
               id,
               user: { username },
@@ -28,7 +28,7 @@ function Home() {
                 title={title}
                 id={id}
                 cost={cost}
-                descriptionSnippet={descriptionSnippet}
+                tldr={tldr}
                 username={username}
                 likeStatus={likeStatus}
                 nbLikes={nbLikes}

@@ -7,16 +7,16 @@ interface IdeaItemProps {
   id: number;
   title: string;
   cost: number;
-  descriptionSnippet: string;
+  tldr: string;
   username: string;
   nbLikes: number;
-  likeStatus: boolean;
+  likeStatus?: boolean | null;
 }
 
 export const IdeaItem: React.FC<IdeaItemProps> = ({
   title,
   id,
-  descriptionSnippet,
+  tldr,
   username,
   cost,
   likeStatus,
@@ -88,9 +88,7 @@ export const IdeaItem: React.FC<IdeaItemProps> = ({
           <span>Posted by </span>
           <span className="italic underline">{username}</span>
         </div>
-        <p className="mt-2 text-gray-600 dark:text-gray-300">
-          {descriptionSnippet}
-        </p>
+        <p className="mt-2 text-gray-600 dark:text-gray-300">{tldr}</p>
       </div>
 
       <div className="flex justify-between flex-wrap py-4">

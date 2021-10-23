@@ -26,6 +26,13 @@ export class Idea extends BaseEntity {
   @Column()
   description!: string;
 
+  @Field()
+  @Column()
+  tldr!: string;
+
+  @Field(() => Boolean, { nullable: true })
+  likeStatus: boolean | null;
+
   @Field(() => Float)
   @Column()
   cost!: number;

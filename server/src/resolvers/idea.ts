@@ -27,11 +27,6 @@ class PaginatedIdeas {
 
 @Resolver(Idea)
 export class IdeaResolver {
-  @FieldResolver(() => String)
-  descriptionSnippet(@Root() root: Idea) {
-    return root.description.slice(0, 500) + "...";
-  }
-
   @FieldResolver(() => Int)
   async nbLikes(@Root() root: Idea) {
     return await Like.count({
@@ -42,7 +37,10 @@ export class IdeaResolver {
   }
 
   @FieldResolver(() => Boolean, { nullable: true })
-  async likeStatus(@Root() root: Idea, @Ctx() { req }: MyContext) {
+  async likeStatus(
+    @Root() root: Idea,
+    @Ctx() { req }: MyContext
+  ): Promise<boolean | null> {
     if (!req.session.userId) {
       return null;
     }
@@ -62,6 +60,7 @@ export class IdeaResolver {
   async createIdea(
     @Arg("title") title: string,
     @Arg("description") description: string,
+    @Arg("tldr") tldr: string,
     @Arg("cost") cost: number,
     @Ctx() { req }: MyContext
   ): Promise<Idea | null> {
@@ -69,6 +68,7 @@ export class IdeaResolver {
       title,
       description,
       cost,
+      tldr,
       userId: req.session.userId,
     }).save();
   }
@@ -130,6 +130,7 @@ export class IdeaResolver {
      `,
       values
     );
+    console.log(ideas);
 
     return {
       ideas: ideas.slice(0, currentLimit),

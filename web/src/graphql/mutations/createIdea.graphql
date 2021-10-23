@@ -1,7 +1,18 @@
-mutation CreateIdea($title: String!, $description: String!, $cost: Float!) {
-  createIdea(title: $title, description: $description, cost: $cost) {
+mutation CreateIdea(
+  $title: String!
+  $description: String!
+  $tldr: String!
+  $cost: Float!
+) {
+  createIdea(
+    title: $title
+    description: $description
+    tldr: $tldr
+    cost: $cost
+  ) {
     id
     title
+    tldr
     userId
   }
 }

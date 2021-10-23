@@ -23,6 +23,7 @@ const CreateIdea: React.FC<CreateIdeaProps> = ({}) => {
           initialValues={{
             title: "",
             description: "",
+            tldr: "",
             cost: 0,
           }}
           onSubmit={async (variables) => {
@@ -51,6 +52,13 @@ const CreateIdea: React.FC<CreateIdeaProps> = ({}) => {
                 type="textarea"
                 textarea
                 placeholder="description..."
+              />
+              <MyInput
+                label="Tldr"
+                name="tldr"
+                type="textarea"
+                textarea
+                placeholder="Too long to read..."
               />
               <MyInput
                 label="Cost"

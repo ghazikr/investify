@@ -3,7 +3,7 @@ query Ideas($limit: Int!, $cursor: String) {
     ideas {
       id
       title
-      descriptionSnippet
+      tldr
       cost
       createdAt
       nbLikes
