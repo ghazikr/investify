@@ -73,6 +73,11 @@ export class IdeaResolver {
     }).save();
   }
 
+  @Query(() => Idea, { nullable: true })
+  idea(@Arg("id", () => Int) id: number): Promise<Idea | undefined> {
+    return Idea.findOne(id);
+  }
+
   @UseMiddleware(isAuth)
   @Mutation(() => Boolean)
   async like(

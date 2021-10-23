@@ -99,7 +99,13 @@ export type PaginatedIdeas = {
 export type Query = {
   __typename?: 'Query';
   currentUser?: Maybe<User>;
+  idea?: Maybe<Idea>;
   ideas: PaginatedIdeas;
+};
+
+
+export type QueryIdeaArgs = {
+  id: Scalars['Int'];
 };
 
 
@@ -191,6 +197,13 @@ export type CurrentUserQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type CurrentUserQuery = { __typename?: 'Query', currentUser?: { __typename?: 'User', email: string, username: string } | null | undefined };
+
+export type IdeaQueryVariables = Exact<{
+  id: Scalars['Int'];
+}>;
+
+
+export type IdeaQuery = { __typename?: 'Query', idea?: { __typename?: 'Idea', title: string, description: string, cost: number } | null | undefined };
 
 export type IdeasQueryVariables = Exact<{
   limit: Scalars['Int'];
@@ -489,6 +502,43 @@ export function useCurrentUserLazyQuery(baseOptions?: Apollo.LazyQueryHookOption
 export type CurrentUserQueryHookResult = ReturnType<typeof useCurrentUserQuery>;
 export type CurrentUserLazyQueryHookResult = ReturnType<typeof useCurrentUserLazyQuery>;
 export type CurrentUserQueryResult = Apollo.QueryResult<CurrentUserQuery, CurrentUserQueryVariables>;
+export const IdeaDocument = gql`
+    query Idea($id: Int!) {
+  idea(id: $id) {
+    title
+    description
+    cost
+  }
+}
+    `;
+
+/**
+ * __useIdeaQuery__
+ *
+ * To run a query within a React component, call `useIdeaQuery` and pass it any options that fit your needs.
+ * When your component renders, `useIdeaQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useIdeaQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useIdeaQuery(baseOptions: Apollo.QueryHookOptions<IdeaQuery, IdeaQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<IdeaQuery, IdeaQueryVariables>(IdeaDocument, options);
+      }
+export function useIdeaLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<IdeaQuery, IdeaQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<IdeaQuery, IdeaQueryVariables>(IdeaDocument, options);
+        }
+export type IdeaQueryHookResult = ReturnType<typeof useIdeaQuery>;
+export type IdeaLazyQueryHookResult = ReturnType<typeof useIdeaLazyQuery>;
+export type IdeaQueryResult = Apollo.QueryResult<IdeaQuery, IdeaQueryVariables>;
 export const IdeasDocument = gql`
     query Ideas($limit: Int!, $cursor: String) {
   ideas(limit: $limit, cursor: $cursor) {

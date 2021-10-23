@@ -74,7 +74,7 @@ export const IdeaItem: React.FC<IdeaItemProps> = ({
       <div className="mt-2 flex flex-col">
         <div className="flex justify-between">
           <a
-            href="#"
+            href={`/idea/${id}`}
             className="text-2xl font-bold text-gray-700 dark:text-white hover:text-gray-600 dark:hover:text-gray-200 hover:underline"
           >
             {title}
