@@ -1,5 +1,4 @@
 import React from "react";
-import { IoMdPricetag } from "react-icons/io";
 import { GiBearFace } from "react-icons/gi";
 import { useCurrentUserQuery, useLikeMutation } from "../generated/graphql";
 import gql from "graphql-tag";
@@ -73,12 +72,17 @@ export const IdeaItem: React.FC<IdeaItemProps> = ({
   return (
     <div className="mb-4 px-8 py-4 mx-auto bg-white rounded-lg shadow-md dark:bg-gray-800">
       <div className="mt-2 flex flex-col">
-        <a
-          href="#"
-          className="text-2xl font-bold text-gray-700 dark:text-white hover:text-gray-600 dark:hover:text-gray-200 hover:underline"
-        >
-          {title}
-        </a>
+        <div className="flex justify-between">
+          <a
+            href="#"
+            className="text-2xl font-bold text-gray-700 dark:text-white hover:text-gray-600 dark:hover:text-gray-200 hover:underline"
+          >
+            {title}
+          </a>
+          <span className="inline-flex items-center lg:ml-auto md:ml-0 ml-auto leading-none text-sm py-1 text-gray-500 bg-indigo-200 rounded-lg p-2">
+            {cost} &euro;
+          </span>
+        </div>
 
         <div className="text-sm font-light text-gray-600 dark:text-gray-400">
           <span>Posted by </span>
@@ -89,7 +93,7 @@ export const IdeaItem: React.FC<IdeaItemProps> = ({
         </p>
       </div>
 
-      <div className="flex items-center flex-wrap py-4">
+      <div className="flex justify-between flex-wrap py-4">
         <a className="text-indigo-500 inline-flex items-center md:mb-2 lg:mb-0">
           Learn More
           <svg
@@ -105,16 +109,12 @@ export const IdeaItem: React.FC<IdeaItemProps> = ({
             <path d="M12 5l7 7-7 7"></path>
           </svg>
         </a>
-        <span className="text-gray-400 mr-3 inline-flex items-center lg:ml-auto md:ml-0 ml-auto leading-none text-sm pr-3 py-1 border-r-2 border-gray-200">
-          <IoMdPricetag className="w-4 h-4 mr-1" />
-          {cost}&euro;
-        </span>
         <span className="text-gray-400 inline-flex items-center leading-none text-sm">
           <button
             onClick={handleLikeClick}
             className={`${likeStatus ? "text-red-600" : ""}`}
           >
-            <GiBearFace className="w-4 h-4 mr-1" />
+            <GiBearFace className="w-6 h-6" />
           </button>
           {nbLikes}
         </span>

@@ -7,7 +7,7 @@ import {
   CurrentUserQuery,
   useLoginMutation,
 } from "../generated/graphql";
-import { Formik } from "formik";
+import { Form, Formik } from "formik";
 import { MyInput } from "../components/MyInput";
 import { toErrorsDict } from "../utils/toErrorsDict";
 import { ActionButton } from "../components/ActionButton";
@@ -52,13 +52,8 @@ const Login: React.FC<loginProps> = ({}) => {
             }
           }}
         >
-          {({ isSubmitting, handleSubmit }) => (
-            <form
-              onSubmit={(e) => {
-                e.preventDefault();
-                handleSubmit();
-              }}
-            >
+          {({ isSubmitting }) => (
+            <Form>
               <MyInput
                 label="email"
                 name="email"
@@ -83,7 +78,7 @@ const Login: React.FC<loginProps> = ({}) => {
                   </a>
                 </NextLink>
               </div>
-            </form>
+            </Form>
           )}
         </Formik>
       </div>

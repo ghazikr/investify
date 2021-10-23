@@ -2,7 +2,7 @@ import { useRouter } from "next/dist/client/router";
 import React from "react";
 import { Layout } from "../components/Layout";
 import { useCreateIdeaMutation } from "../generated/graphql";
-import { Formik } from "formik";
+import { Form, Formik } from "formik";
 import { MyInput } from "../components/MyInput";
 import { ActionButton } from "../components/ActionButton";
 import { withApollo } from "../utils/withApollo";
@@ -37,13 +37,8 @@ const CreateIdea: React.FC<CreateIdeaProps> = ({}) => {
             }
           }}
         >
-          {({ isSubmitting, handleSubmit }) => (
-            <form
-              onSubmit={(e) => {
-                e.preventDefault();
-                handleSubmit();
-              }}
-            >
+          {({ isSubmitting }) => (
+            <Form>
               <MyInput
                 label="Title"
                 name="title"
@@ -67,7 +62,7 @@ const CreateIdea: React.FC<CreateIdeaProps> = ({}) => {
               <div className="flex items-center justify-between">
                 <ActionButton label="Create Idea" isSubmitting={isSubmitting} />
               </div>
-            </form>
+            </Form>
           )}
         </Formik>
       </div>

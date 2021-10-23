@@ -1,4 +1,3 @@
-import { ApolloQueryResult } from "@apollo/client";
 import { Transition } from "@headlessui/react";
 import React, { LegacyRef, useRef } from "react";
 import { IconType } from "react-icons/lib";
@@ -7,7 +6,7 @@ import useOutsideCloser from "../hooks/useOutsideCloser";
 interface DropDownMenuItem {
   label: string;
   Icon: IconType;
-  onClick: () => Promise<ApolloQueryResult<any>[] | null>;
+  onClick: () => void;
 }
 
 interface Props {

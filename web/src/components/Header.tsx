@@ -22,12 +22,16 @@ export const Header: React.FC<HeaderProps> = ({}) => {
   const dropdownMenuItems = [
     {
       label: "Post an idea",
-      onClick: () => router.push("/create-idea"),
+      onClick: () => {
+        router.push("/create-idea");
+      },
       Icon: BsFillFileEarmarkPostFill,
     },
     {
       label: "Logout",
-      onClick: () => logout().then(() => client.resetStore()),
+      onClick: () => {
+        logout().then(() => client.resetStore());
+      },
       Icon: BiLogOut,
     },
   ];

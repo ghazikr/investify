@@ -6,7 +6,7 @@ import {
   CurrentUserQuery,
   useRegisterMutation,
 } from "../generated/graphql";
-import { Formik } from "formik";
+import { Form, Formik } from "formik";
 import { MyInput } from "../components/MyInput";
 import { toErrorsDict } from "../utils/toErrorsDict";
 import { ActionButton } from "../components/ActionButton";
@@ -46,13 +46,8 @@ const Register: React.FC<RegisterProps> = ({}) => {
             }
           }}
         >
-          {({ isSubmitting, handleSubmit }) => (
-            <form
-              onSubmit={(e) => {
-                e.preventDefault();
-                handleSubmit();
-              }}
-            >
+          {({ isSubmitting }) => (
+            <Form>
               <MyInput
                 label="Username"
                 name="username"
@@ -75,7 +70,7 @@ const Register: React.FC<RegisterProps> = ({}) => {
               <div className="flex items-center justify-between">
                 <ActionButton label="Register" isSubmitting={isSubmitting} />
               </div>
-            </form>
+            </Form>
           )}
         </Formik>
       </div>
